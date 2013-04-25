@@ -35,6 +35,10 @@ import java.util.Vector;
 
 import javax.crypto.Cipher;
 
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.CrashManagerListener;
+import net.hockeyapp.android.UpdateManager;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -214,9 +218,27 @@ public class PixelKnotActivity extends SherlockFragmentActivity implements F5Not
 		last_locale = PreferenceManager.getDefaultSharedPreferences(this).getString(Settings.LANGUAGE, "0");
 	}
 	
+	private void checkForCrashes() {
+	    CrashManager.register(this, "FAKE ID", new CrashManagerListener() {
+	    	
+	    	  // we don't want to collect unique user data
+	    	  // or we could make this a user preference?
+	    	  public String getUserID() {
+	    	    return "";
+	    	  }
+	    	});
+	  }
+
+	  private void checkForUpdates() {
+	    // Remove this for store builds!
+	    UpdateManager.register(this, "FAKE ID");
+	  }
+	
 	@Override
 	public void onResume() {
 		super.onResume();
+		checkForCrashes();
+	    checkForUpdates();
 		
 		Log.d(LOG, "onResume (main) called");
 				
@@ -321,6 +343,8 @@ public class PixelKnotActivity extends SherlockFragmentActivity implements F5Not
 		ad.setView(about);
 		ad.setPositiveButton(getString(R.string.ok), null);
 		ad.show();
+		
+		throw new RuntimeException("Crashing to test HockeyApp!");
 	}
 
 	@Override
