@@ -83,6 +83,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bugsense.trace.BugSenseHandler;
+
 @SuppressLint("NewApi")
 public class PixelKnotActivity extends SherlockFragmentActivity implements F5Notification, Constants, FragmentListener, ViewPager.OnPageChangeListener, OnGlobalLayoutListener, MediaScannerListener, EmbedListener, ExtractionListener {
 	private PKPager pk_pager;
@@ -128,6 +130,8 @@ public class PixelKnotActivity extends SherlockFragmentActivity implements F5Not
 		
 		Log.d(LOG, "onCreate (main) called");
 		
+		BugSenseHandler.initAndStartSession(this, "FAKE_API_KEY");
+
 		dump = new File(DUMP);
 		if(!dump.exists())
 			dump.mkdir();
@@ -235,6 +239,7 @@ public class PixelKnotActivity extends SherlockFragmentActivity implements F5Not
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
+		BugSenseHandler.leaveBreadcrumb("create the menu");
 		MenuInflater mi = getSupportMenuInflater();
 		mi.inflate(R.menu.menu, menu);
 		return true;
@@ -257,6 +262,7 @@ public class PixelKnotActivity extends SherlockFragmentActivity implements F5Not
 
 	private void restart() {
 		Log.d(LOG, "RESTARTING?");
+		BugSenseHandler.leaveBreadcrumb("restart()");
 		h.post(new Runnable() {
 			@Override
 			public void run() {
@@ -282,6 +288,7 @@ public class PixelKnotActivity extends SherlockFragmentActivity implements F5Not
 	}
 	
 	private void showAbout() {
+		BugSenseHandler.leaveBreadcrumb("showAbout()"); 
 		AlertDialog.Builder ad = new AlertDialog.Builder(this);
 		View about = LayoutInflater.from(this).inflate(R.layout.about_fragment, null);
 		
@@ -321,6 +328,19 @@ public class PixelKnotActivity extends SherlockFragmentActivity implements F5Not
 		ad.setView(about);
 		ad.setPositiveButton(getString(R.string.ok), null);
 		ad.show();
+		
+		try {
+			// divide by zero for serious science
+			int impossible = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode / 0;
+			Log.d("PixelKnot", "Science says: " + impossible);
+		} catch (ArithmeticException ex) {
+			BugSenseHandler.sendException(ex);
+		} catch (NameNotFoundException ex) {
+			BugSenseHandler.sendException(ex);
+		}
+		
+
+		throw new RuntimeException("Crashing to test bugsense!");
 	}
 
 	@Override
