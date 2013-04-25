@@ -9,11 +9,17 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
+    <!--  BEGIN: FOR DEBUG BUILDS -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!--  END: FOR DEBUG BUILDS -->
+
     <!-- 
     <uses-permission android:name="org.thialfihar.android.apg.permission.READ_KEY_DETAILS" />
  	-->
     
     <application
+        android:name="info.guardianproject.pixelknot.PixelKnotApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -57,6 +63,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".Preferences" />
+        <!--  BEGIN: FOR DEBUG BUILDS -->
+        <activity android:name="org.acra.CrashReportDialog"
+	        android:theme="@style/Theme.Sherlock.Dialog"
+	        android:launchMode="singleInstance"
+	        android:excludeFromRecents="true"
+	        android:finishOnTaskLaunch="true" />
+        <!--  END: FOR DEBUG BUILDS -->
     </application>
 
 </manifest>
